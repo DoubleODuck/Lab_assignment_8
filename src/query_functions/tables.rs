@@ -114,6 +114,6 @@ pub struct TableStruct {
     Type: String,
     Null: String,
     Key: String,
-    Default: String,
-    xtra: String,
+    Default: Option<String>,
+    Extra: String,
 }

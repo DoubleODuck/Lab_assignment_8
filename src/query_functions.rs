@@ -152,21 +152,19 @@ pub fn gen_query(
     range_nums: Vec<usize>,
     inclusion_symbol: &str,
 ) -> String {
-    let mut query = format!(
-        "Select * from {} where {} {} {}",
-        table_name,
-        column_name,
-        range_symbols.get(0).unwrap(),
-        range_nums.get(0).unwrap()
-    );
+    let mut query = format!("Select * from {} where", table_name);
     if !inclusion_symbol.is_empty() {
-        query = format!(
-            "{query} {} {} {} {}",
-            inclusion_symbol,
-            column_name,
-            range_symbols.get(1).unwrap(),
-            range_nums.get(1).unwrap()
-        );
+        if inclusion_symbol.eq("NOT") {
+            query = format!("{query} {} {} {} {}",inclusion_symbol, column_name, range_symbols.get(0).unwrap(), range_nums.get(0).unwrap());
+        } else {
+            query = format!(
+                "{query} {} {} {} {}",
+                inclusion_symbol,
+                column_name,
+                range_symbols.get(1).unwrap(),
+                range_nums.get(1).unwrap()
+            );
+        }
     }
     query
 }
@@ -274,20 +272,21 @@ async fn next_id(pool: &MySqlPool, table_name: &str) -> Result<u32, sqlx::Error>
     let count: i64 = result.try_get("count(*)").unwrap();
     Ok((count + 1) as u32)
 }
-pub async fn update_info1(pool: &MySqlPool) -> Result<(),sqlx::Error>{
+pub async fn update_info1(pool: &MySqlPool) -> Result<(), sqlx::Error> {
     let query = format!("update bulk_prices set ItemName = 'lmao even' WHERE BIC = 8");
     println!("{query}");
     sqlx::query(&query).execute(pool).await?;
     Ok(())
 }
-pub async fn update_info2(pool: &MySqlPool) -> Result<(),sqlx::Error>{
+pub async fn update_info2(pool: &MySqlPool) -> Result<(), sqlx::Error> {
     let query = format!("update catalogue set category = 'persian' where product_name = 'mane'");
     println!("{query}");
     sqlx::query(&query).execute(pool).await?;
     Ok(())
 }
-pub async fn update_info3(pool: &MySqlPool) -> Result<(),sqlx::Error>{
-    let query = format!("update client_list set email = 'FaaS@mymail.com' where full_name = 'Sarah Afton'");
+pub async fn update_info3(pool: &MySqlPool) -> Result<(), sqlx::Error> {
+    let query =
+        format!("update client_list set email = 'FaaS@mymail.com' where full_name = 'Sarah Afton'");
     println!("{query}");
     sqlx::query(&query).execute(pool).await?;
     Ok(())
